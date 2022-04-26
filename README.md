@@ -9,6 +9,7 @@ Will update later
 
 File:
 1_模板.docx -- should put in C:\Temp\Print\小人书
+
 kid_book_downloader.py -- the run file -- python kid_book_downloader.py 
 
 Directory --
