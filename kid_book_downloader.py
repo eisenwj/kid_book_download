@@ -48,7 +48,7 @@ def img_validate(pathname,rotate_mode):
     width=img.size[0]
     height=img.size[1]
 
-    if (height > width):
+    if (height > width) and (rotate_mode > 0):
         img = img.transpose(rotate_mode)
         if img.mode in ("RGBA", "P"): 
             img = img.convert("RGB")
@@ -240,15 +240,17 @@ if (__name__  ==  "__main__") :
             if (sys.platform=="linux"):
                 dir=r"/mnt/c/Temp/Movie/downthemall"
 
-    rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针:   [1]")
-    while rotate_direction not in ['','1','2']:
+    rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针;3.不旋转:   [1]")
+    while rotate_direction not in ['','1','2','3']:
         rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针:  [1]")
     
     if ((rotate_direction == '1') or (rotate_direction=="")) :
 #        rotate_mode=Image.ROTATE_90
         rotate_mode=Image.Transpose.ROTATE_90
-    else:
+    if (rotate_direction == '2') :
         rotate_mode=Image.Transpose.ROTATE_270
+    if (rotate_direction == '3') :
+        rotate_mode=-1
 
     configures.append(dir)
     configures.append(rotate_mode)
