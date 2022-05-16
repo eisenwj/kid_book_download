@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from asyncio import streams
 from docx import Document
+from docx.enum.section import *
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Cm, Inches
 
@@ -122,6 +123,24 @@ def kidbook_download(kidbook_url,errormsgs,configures):
         if (str(sys.platform) == "linux"):
             doc = Document(r"/mnt/c/Temp/Print/小人书/01_模板.docx")
     
+    #check if need portrait page orientation
+    if ( rotate_mode == -1 ):
+        current_section = doc.sections[-1]
+        new_width, new_height = current_section.page_height, current_section.page_width
+#        new_section = doc.add_section(WD_SECTION.NEW_PAGE)
+        current_section.orientation = WD_ORIENT.PORTRAIT
+        current_section.page_width = new_width
+        current_section.page_height = new_height
+
+#        current_section = doc.sections[-1]
+#        new_width, new_height = current_section.page_height, current_section.page_width
+#        new_section = doc.add_section(WD_SECTION.NEW_PAGE)
+#        new_section.orientation = WD_ORIENTATION.PORTRAIT
+#        new_section.page_width = new_width
+#        new_section.page_height = new_height
+
+    
+    
     p = doc.add_paragraph()
     p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
     run = p.add_run(book_title+" url: "+kidbook_url)
@@ -148,16 +167,19 @@ def kidbook_download(kidbook_url,errormsgs,configures):
 
 
         for j in range(5):
+#           flag=0 if download successfully, and !0 if failed 
             flag = pic_download(img_dir,"640_"+str(i)+".jpg",pic_url)
 
             if (flag == 0):
                 wh_ratio=float(img_validate(img_dir+os.sep+"640_"+str(i)+".jpg",rotate_mode))
                 #A4 paper size is 297*210
-                
-                if wh_ratio > float(297.0/210.0):
-                    run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",width=Inches(11))
+                if (rotate_mode > 0 ):
+                    if wh_ratio > float(297.0/210.0):
+                        run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",width=Inches(11))
+                    else:
+                        run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(8))
                 else:
-                    run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(8))
+                    run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(11))
                 break
             else:
                 print("640_"+str(i)+".jpg failed for "+str(j)+" times.")
