@@ -42,22 +42,55 @@ def img_search(soup):
     
     return results
 
-#check and process picture downloaded and make it all horizoned
+#check and process picture downloaded and make it all horizoned if rotate_mode is 90/270 degree
+#Or keep it portraited if rotate_mode is 0 degree
 def img_validate(pathname,rotate_mode):
 
     img=Image.open(pathname)
+
+    #convert the png or other format with gray scale to jpeg
+    if img.mode in ("RGBA", "P"): 
+        img = img.convert("RGB")
 
     width=img.size[0]
     height=img.size[1]
 
     if (height > width) and (rotate_mode > 0):
         img = img.transpose(rotate_mode)
-        if img.mode in ("RGBA", "P"): 
-            img = img.convert("RGB")
         img.save(pathname)
         img.close()
         return float(height/width)
     return float(width/height)
+
+#set the page orientation to be either portrait or landscape
+#orientation should be "portraited"/"landscape"
+def page_set_orientation(doc,run,orientation):
+    
+    current_section = doc.sections[-1]
+    current_width, current_height = current_section.page_height, current_section.page_width
+    
+    if (orientation == "landscape"):
+        if (current_width < current_height):
+            new_section = doc.add_section(WD_SECTION.NEW_PAGE)
+            new_section.orientation = WD_ORIENTATION.PORTRAIT
+            new_section.page_width = current_height
+            new_section.page_height = current_width
+            p = doc.add_paragraph()
+            p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
+            run = p.add_run()
+            
+    if (orientation == "portrait"):
+        if (current_width > current_height):
+            new_section = doc.add_section(WD_SECTION.NEW_PAGE)
+            new_section.orientation = WD_ORIENTATION.LANDSCAPE
+            new_section.page_width = current_height
+            new_section.page_height = current_width
+            p = doc.add_paragraph()
+            p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
+            run = p.add_run()
+    
+    return run
+    
 
 #download one picture from assigned url
 def pic_download(dir,pic_name,pic_url):
@@ -95,7 +128,11 @@ def img_filter(url_str):
         r"https://mmbiz.qpic.cn/mmbiz_jpg/6bML8pV2ozEcG6JV3zgb6ibOJsxic0ic8vib12RCDwW957m2WciazBUNiblUt8cuefUo2aa6XibGz7xZSM52ZnE9r4FAQ/640?wx_fmt=jpeg",
         r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aDymGIgvnib6KouFAAk8HSDfxHNfQDwlLPhr02WVyOF7ZYdxXjESBibeqDtEdWo1THcyOuT1xF76CWA/640?wx_fmt=jpeg",
         r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aAvz6sHVz7uq5I8BAjH23QI7wp8PF9FP7kL3x5iaLgHPJhtgSqc5q9MAOAsyGjicRA7478O2ia0gicItg/640?wx_fmt=png",
-        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aC88sEefGxFhofjuh9Nr2AhibkGJuK0T1kaSnefVibduibCy1u80qrg0xdTV60p5aGQUbsBib7GOCticHw/640?wx_fmt=jpeg"
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aC88sEefGxFhofjuh9Nr2AhibkGJuK0T1kaSnefVibduibCy1u80qrg0xdTV60p5aGQUbsBib7GOCticHw/640?wx_fmt=jpeg",
+        r"https://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aDymGIgvnib6KouFAAk8HSDfxHNfQDwlLPhr02WVyOF7ZYdxXjESBibeqDtEdWo1THcyOuT1xF76CWA/640?wx_fmt=jpeg",
+        r"https://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aC88sEefGxFhofjuh9Nr2AhibkGJuK0T1kaSnefVibduibCy1u80qrg0xdTV60p5aGQUbsBib7GOCticHw/640?wx_fmt=jpeg",
+        r"https://mmbiz.qpic.cn/mmbiz_jpg/wHtT7l3B4aBaas6nn0kZWiaARODl83I2UQ6ianx0duIbmr3s2uppyb52Z2Bos2RVuILljC2SHSSo5vneS6xmb5Ug/640?wx_fmt=jpeg",
+        r"https://mmbiz.qpic.cn/mmbiz_jpg/6bML8pV2ozF8thsia5m9FvGn0vVcibfJ1rxF1YBagyz0YGrr06VQLvyqYrFnVdV2J91ITVCGicK8quCGVg88ojr2Q/640?wx_fmt=jpeg"
         ]
     if (url_str in adv_list):
         return True
@@ -185,7 +222,19 @@ def kidbook_download(kidbook_url,errormsgs,configures):
                         else:
                             run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(8))
                     else:
-                        run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(11))
+                        if (wh_ratio >= 1):
+                            #a picture in landscape in a portraited book, need to rotate the current page only
+                            run=page_set_orientation(doc, run, "landscape")
+                            if wh_ratio > float(297.0/210.0):
+                                run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",width=Inches(11))
+                            else:
+                                run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(8))
+                            run=page_set_orientation(doc, run, "portrait")
+                        else:
+                            if wh_ratio < float(210.0/297.0):
+                                run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",height=Inches(11))
+                            else:
+                                run.add_picture(img_dir+os.sep+"640_"+str(i)+".jpg",width=Inches(8))
                     break
                 except docx.image.exceptions.UnexpectedEndOfFileError:
                     print("640_"+str(i)+".jpg failed to add to doc.")
@@ -277,7 +326,6 @@ if (__name__  ==  "__main__") :
         rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针:  [1]")
     
     if ((rotate_direction == '1') or (rotate_direction=="")) :
-#        rotate_mode=Image.ROTATE_90
         rotate_mode=Image.Transpose.ROTATE_90
     if (rotate_direction == '2') :
         rotate_mode=Image.Transpose.ROTATE_270
