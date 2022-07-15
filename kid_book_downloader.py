@@ -70,24 +70,24 @@ def page_set_orientation(doc,run,orientation):
     current_width, current_height = current_section.page_height, current_section.page_width
     
     if (orientation == "landscape"):
-        if (current_width < current_height):
-            new_section = doc.add_section(WD_SECTION.NEW_PAGE)
-            new_section.orientation = WD_ORIENTATION.PORTRAIT
-            new_section.page_width = current_height
-            new_section.page_height = current_width
-            p = doc.add_paragraph()
-            p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
-            run = p.add_run()
+#        if (current_width < current_height):
+        new_section = doc.add_section(WD_SECTION.NEW_PAGE)
+        new_section.orientation = WD_ORIENTATION.PORTRAIT
+        new_section.page_width = current_height
+        new_section.page_height = current_width
+        p = doc.add_paragraph()
+        p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
+        run = p.add_run()
             
     if (orientation == "portrait"):
-        if (current_width > current_height):
-            new_section = doc.add_section(WD_SECTION.NEW_PAGE)
-            new_section.orientation = WD_ORIENTATION.LANDSCAPE
-            new_section.page_width = current_height
-            new_section.page_height = current_width
-            p = doc.add_paragraph()
-            p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
-            run = p.add_run()
+#        if (current_width > current_height):
+        new_section = doc.add_section(WD_SECTION.NEW_PAGE)
+        new_section.orientation = WD_ORIENTATION.LANDSCAPE
+        new_section.page_width = current_height
+        new_section.page_height = current_width
+        p = doc.add_paragraph()
+        p.alignment= WD_PARAGRAPH_ALIGNMENT.CENTER
+        run = p.add_run()
     
     return run
     
@@ -132,7 +132,16 @@ def img_filter(url_str):
         r"https://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aDymGIgvnib6KouFAAk8HSDfxHNfQDwlLPhr02WVyOF7ZYdxXjESBibeqDtEdWo1THcyOuT1xF76CWA/640?wx_fmt=jpeg",
         r"https://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aC88sEefGxFhofjuh9Nr2AhibkGJuK0T1kaSnefVibduibCy1u80qrg0xdTV60p5aGQUbsBib7GOCticHw/640?wx_fmt=jpeg",
         r"https://mmbiz.qpic.cn/mmbiz_jpg/wHtT7l3B4aBaas6nn0kZWiaARODl83I2UQ6ianx0duIbmr3s2uppyb52Z2Bos2RVuILljC2SHSSo5vneS6xmb5Ug/640?wx_fmt=jpeg",
-        r"https://mmbiz.qpic.cn/mmbiz_jpg/6bML8pV2ozF8thsia5m9FvGn0vVcibfJ1rxF1YBagyz0YGrr06VQLvyqYrFnVdV2J91ITVCGicK8quCGVg88ojr2Q/640?wx_fmt=jpeg"
+        r"https://mmbiz.qpic.cn/mmbiz_jpg/6bML8pV2ozF8thsia5m9FvGn0vVcibfJ1rxF1YBagyz0YGrr06VQLvyqYrFnVdV2J91ITVCGicK8quCGVg88ojr2Q/640?wx_fmt=jpeg",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aBtMicGrEpiajQcLpP7GapI8ia3iaXBSsBaJZ5hqcW50j0csGcSxyLLHgS8NaYtdZAL9fMVYZsStUMygA/640?tp=webp",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aAt2GtVwnBK4mSM44rE6kNE3HuNDx5icbb3g9fS7awvjAicEWjxPxDHWUKthsulQpAAjWluZLwIbAhw/640?tp=webp",
+        r"http://lhh.a8z8.com/data/attachment/forum/201310/31/1310312222fa63dc8a22021356.jpg",
+        r"http://lhh.a8z8.com/data/attachment/forum/day_100821/1008212304a61eb0ef2536f696.jpg",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aBHn2pMNkZ8sNaib5FRiaNtBpWR0sRTeFc88SiasTKicdIQh6wtJwfgsicNg0VB6jeUm09CIiaQNA6Hsm3w/640?tp=webp",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aD0wv0LqCKtj4bplN7kW9rsboZdA3OEOujfb9AuOGZLR4TRzZs820icoKvsxdpJmYdCKTVVOblo5jw/0",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aD1UWb3Vyibwiaic7HqxcLr87BA4v3LTEn1bBaYVHJ3vIAAVKl654d3CCx62qIU2g8ck2Hg7VfWzwe1g/0",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aD0wv0LqCKtj4bplN7kW9rsboZdA3OEOujfb9AuOGZLR4TRzZs820icoKvsxdpJmYdCKTVVOblo5jw/640?tp=webp",
+        r"http://mmbiz.qpic.cn/mmbiz/wHtT7l3B4aAvz6sHVz7uq5I8BAjH23QI7wp8PF9FP7kL3x5iaLgHPJhtgSqc5q9MAOAsyGjicRA7478O2ia0gicItg/0?wx_fmt=png"
         ]
     if (url_str in adv_list):
         return True
@@ -290,50 +299,72 @@ def kidbook_pack_download(url,errormsgs,configures):
 
 
 if (__name__  ==  "__main__") :
-    #get the book's url--
-    #Next action will added book pack url
+        
+    
     
     #contains all the error messages to print at last
     mgr = multiprocessing.Manager()
     errormsgs=mgr.list()
     configures=mgr.list()
-    #Folder for book downloading
-#    dir=mgr.Value(ctypes.c_char_p,"")
-    dir=""
 
-    print("Started:")
-    url=input("请输入小人书 网页链接:")
-    is_pack=int(input("是否是合集--1:合集；2:单本    "))
-
-    while is_pack not in [1,2]:
-        is_pack=int(input("是否是合集--1:合集；2:单本    "))
-
-    if (sys.platform=="win32"):
-        dir=input(r"请输入下载目录:[C:\Temp\Movie\downthemall]  ")
-    else:
-        if (sys.platform=="linux"):
-            dir=input(r"请输入下载目录:[/mnt/c/Temp/Movie/downthemall]  ")
-        
-    if (dir == ""):
+    #Check if there's any parameter, if yes, then it should be a single kidbook's url
+    #Then all the configurations should be all default values --
+    #dir => C:\Temp\Movie\downthemall(windows) or /mnt/c/Temp/Movie/downthemall(linux)
+    #is_pack => 2
+    #rotate_mode => Image.Transpose.ROTATE_90
+    #Be noticed -- the parameter should not be a kidboook pack's url
+    if (len(sys.argv)>1):
         if (sys.platform=="win32"):
             dir=r"C:\Temp\Movie\downthemall"
         else:
             if (sys.platform=="linux"):
                 dir=r"/mnt/c/Temp/Movie/downthemall"
-
-    rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针;3.不旋转:   [1]")
-    while rotate_direction not in ['','1','2','3']:
-        rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针:  [1]")
+        is_pack = 2
+        rotate_mode = Image.Transpose.ROTATE_90
+        configures.append(dir)
+        configures.append(rotate_mode)
+        url=sys.argv[1]
+    else:
+    #No parameter input, need to manually set the download settings
+    #get the book's url--
+    #Next action will added book pack url
+    #Folder for book downloading
+#    dir=mgr.Value(ctypes.c_char_p,"")
+        dir=""
     
-    if ((rotate_direction == '1') or (rotate_direction=="")) :
-        rotate_mode=Image.Transpose.ROTATE_90
-    if (rotate_direction == '2') :
-        rotate_mode=Image.Transpose.ROTATE_270
-    if (rotate_direction == '3') :
-        rotate_mode=-1
-
-    configures.append(dir)
-    configures.append(rotate_mode)
+        print("Started:")
+        url=input("请输入小人书 网页链接:")
+        is_pack=int(input("是否是合集--1:合集；2:单本    "))
+    
+        while is_pack not in [1,2]:
+            is_pack=int(input("是否是合集--1:合集；2:单本    "))
+    
+        if (sys.platform=="win32"):
+            dir=input(r"请输入下载目录:[C:\Temp\Movie\downthemall]  ")
+        else:
+            if (sys.platform=="linux"):
+                dir=input(r"请输入下载目录:[/mnt/c/Temp/Movie/downthemall]  ")
+            
+        if (dir == ""):
+            if (sys.platform=="win32"):
+                dir=r"C:\Temp\Movie\downthemall"
+            else:
+                if (sys.platform=="linux"):
+                    dir=r"/mnt/c/Temp/Movie/downthemall"
+    
+        rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针;3.不旋转:   [1]")
+        while rotate_direction not in ['','1','2','3']:
+            rotate_direction=input(r"如需旋转，旋转方向: 1. 逆时针; 2. 顺时针:  [1]")
+        
+        if ((rotate_direction == '1') or (rotate_direction=="")) :
+            rotate_mode=Image.Transpose.ROTATE_90
+        if (rotate_direction == '2') :
+            rotate_mode=Image.Transpose.ROTATE_270
+        if (rotate_direction == '3') :
+            rotate_mode=-1
+    
+        configures.append(dir)
+        configures.append(rotate_mode)
 
     if (is_pack == 2):
         print("单本下载")
